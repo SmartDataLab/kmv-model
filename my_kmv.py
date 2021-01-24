@@ -3,6 +3,7 @@ from scipy.stats import norm
 from scipy import integrate
 from arch.univariate import ZeroMean, GARCH, Normal, ARX
 from api_data import get_real_data
+import pandas as pd
 
 R = 0.05
 T = 250
