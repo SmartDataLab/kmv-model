@@ -52,6 +52,7 @@ def get_real_data(code, start_date, end_date):
 if __name__ == "__main__":
     code = "601398.SH"
     df = get_real_data(code, "20180101", "20201210")
+    df.to_csv('%s.csv'%code)
     print(df)
 
 
