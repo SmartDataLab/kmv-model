@@ -111,5 +111,5 @@ if __name__ == "__main__":
     VA, sigmaA, iter_, DD, delta_ = get_iterated_result(
         p, e, d_short, d_long, outstanding_shares, total_shares, 100, 1e-3
     )
-    df_res = pd.DataFrame({"VA": VA, "sigmaA": sigamA, "DD": DD})
+    df_res = pd.DataFrame({"VA": VA, "sigmaA": sigmaA, "DD": DD})
     df_res.to_csv("%s_res.csv" % code)
