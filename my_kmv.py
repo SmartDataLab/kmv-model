@@ -24,7 +24,6 @@ def get_E(p: np.array, e: np.array, outstanding_shares: float, total_shares: flo
 
 
 def get_sigmaE(E, method="GARCH"):
-    # TODO(sujinhua): add specific method to calculate the ratio of the
     ar = ARX(E, lags=[1, 5])
     ar.volatility = GARCH(p=1, q=1)
     res = ar.fit(update_freq=0, disp="off")
@@ -71,9 +70,11 @@ def get_iterated_result(
     p, e, d_short, d_long, outstanding_shares, total_shares, N, stop_diff
 ):
     E = get_E(p, e, outstanding_shares, total_shares)
+    # E = E.astype("double")
     DP = get_DP(d_short, d_long)
+    # print(E)
     sigmaE = get_sigmaE(E)
-
+    # sigmaE = sigmaE.astype("double")
     sigmaE = np.nan_to_num(sigmaE, copy=True, nan=np.nanmean(sigmaE))
 
     sigmaA = np.random.random(len(p))
@@ -107,7 +108,12 @@ if __name__ == "__main__":
         df["outstanding_share"],
         df["total_share"],
     )
-
+    p = p.astype("double")
+    e = e.astype("double")
+    d_long = d_long.astype("double")
+    d_short = d_short.astype("double")
+    outstanding_shares = outstanding_shares.astype("double")
+    total_shares = total_shares.astype("double")
     VA, sigmaA, iter_, DD, delta_ = get_iterated_result(
         p, e, d_short, d_long, outstanding_shares, total_shares, 100, 1e-3
     )
