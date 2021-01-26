@@ -17,8 +17,6 @@ def get_real_data(code, start_date, end_date):
     df = pro.balancesheet(ts_code=code, start_date=start_date, end_date=end_date)
     # profit_to_op
     df3 = pro.fina_indicator(ts_code=code, start_date=start_date, end_date=end_date)
-    print(df3["profit_to_op"])
-    print(df3["end_date"])
 
     def find_total_liab(date_str, df):
         date_month = int(date_str[:6])
@@ -67,8 +65,8 @@ def get_real_data(code, start_date, end_date):
 
 
 if __name__ == "__main__":
-    code = "601398.SH"
-    df = get_real_data(code, "20180101", "20201210")
+    code = "600519.SH"
+    df = get_real_data(code, "20200601", "20201210")
     df.to_csv("%s.csv" % code)
     print(df)
 
