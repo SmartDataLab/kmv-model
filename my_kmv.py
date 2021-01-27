@@ -107,24 +107,19 @@ def get_iterated_result(
 
 
 #%%
-import numpy as np
-
-x = np.zeros(10)
-#%%
-
-#%%
 def check_and_interpolate(x):
     nan_array = np.isnan(x)
     if nan_array.sum() == 0:
         return x
     else:
         x[nan_array] = x.mean()
+        return x
 
 
 #%%
 
 if __name__ == "__main__":
-    mode = "v1"
+    mode = "v2"
     code = "601398.SH"
     df = get_real_data(code, "20180101", "20201201")
     p, e, d_short, d_long, outstanding_shares, total_shares = (
