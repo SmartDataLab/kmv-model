@@ -24,15 +24,16 @@ def get_E(p: np.array, e: np.array, outstanding_shares: float, total_shares: flo
 
 
 def get_sigmaE(E, method="GARCH"):
-    # TODO(sujinhua): estimating the model parameters.
     # The scale of y is 3.747e+20.
     # Parameterestimation work better when this value is between 1 and 1000.
     # The recommendedrescaling is 1e-09 * y.
     rescale = 1e9
     ar = ARX(E / rescale, lags=[1, 5])
     ar.volatility = GARCH(p=1, q=1)
+    print("ar", ar.volatility)
     res = ar.fit(update_freq=0, disp="off")
-    return res.conditional_volatility * rescale
+    print("condi_vol", res.conditional_volatility)
+    return check_and_interpolate(res.conditional_volatility * rescale)
 
 
 def get_DP(d_short: np.array, d_long: np.array):
@@ -83,7 +84,9 @@ def get_iterated_result(
     E = check_and_interpolate(get_E(p, e, outstanding_shares, total_shares))
     # E = E.astype("double")
     DP = check_and_interpolate(get_DP(d_short, d_long))
-    # print(E)
+    # print("E", E, "sigmaE", get_sigmaE(E))
+    print("E")
+    print(E)
     sigmaE = check_and_interpolate(get_sigmaE(E))
     # sigmaE = sigmaE.astype("double")
     # sigmaE = np.nan_to_num(sigmaE, copy=True, nan=np.nanmean(sigmaE))
