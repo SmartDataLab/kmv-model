@@ -31,7 +31,7 @@ def get_real_data(code, start_date, end_date):
             df.loc[i, "total_hldr_eqy_inc_min_int"],
         )
 
-    def find_profit_to_op(date_str, df):
+    def find_profit_to_op(date_str, df, column_name):
         date_month = int(date_str[:6])
         for i in range(len(df)):
             end_date = df.loc[i, "end_date"]
@@ -39,7 +39,7 @@ def get_real_data(code, start_date, end_date):
             # print(int(end_date[:6]), date_month, months_delta)
             if months_delta < 3 and months_delta >= 0:
                 break
-        return df.loc[i, "profit_to_op"]
+        return df.loc[i, column_name]
 
     code = code.split(".")[1].lower() + code.split(".")[0]
     # df2 = pro.daily(ts_code=code, start_date=start_date, end_date=end_date)
@@ -60,7 +60,10 @@ def get_real_data(code, start_date, end_date):
             df2.loc[date_str, "total_share"],
             df2.loc[date_str, "total_hldr_eqy_inc_min_int"],
         ) = find_total_liab(input_str, df)
-        df2.loc[date_str, "profit_to_op"] = find_profit_to_op(input_str, df3)
+        df2.loc[date_str, "profit_to_op"] = find_profit_to_op(
+            input_str, df3, "profit_to_op"
+        )
+        df2.loc[date_str, "roe_dt"] = find_profit_to_op(input_str, df3, "roe_dt")
     return df2
 
 
