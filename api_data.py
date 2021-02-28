@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import akshare as ak
 
+# TODO(sujinhua): to make sure the liability is correct for the bank
 
 with open("token.txt") as f:
     token = f.readline()
@@ -26,6 +27,7 @@ def get_real_data(code, start_date, end_date):
             if months_delta < 3 and months_delta >= 0:
                 break
         return (
+            df.loc[i, "total_assets"],
             df.loc[i, "total_liab"],
             df.loc[i, "total_share"],
             df.loc[i, "total_hldr_eqy_inc_min_int"],
@@ -56,6 +58,7 @@ def get_real_data(code, start_date, end_date):
         input_str = "20" + date_str.strftime("%y%m%d")
         # print(input_str)
         (
+            df2.loc[date_str, "total_assets"],
             df2.loc[date_str, "total_liab"],
             df2.loc[date_str, "total_share"],
             df2.loc[date_str, "total_hldr_eqy_inc_min_int"],
@@ -69,9 +72,11 @@ def get_real_data(code, start_date, end_date):
 
 if __name__ == "__main__":
     code = "600519.SH"
-    df = get_real_data(code, "20200601", "20201210")
-    df.to_csv("%s.csv" % code)
+    # code = "601963.SH"
+    df = get_real_data(code, "20100101", "20201201")
     print(df)
+    print(df.columns)
+    df.to_csv("%s.csv" % code)
 
 
 # %%

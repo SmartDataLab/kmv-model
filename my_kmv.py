@@ -30,14 +30,12 @@ def get_sigmaE(E, method="GARCH"):
     rescale = 1e9
     ar = ARX(E / rescale, lags=[1, 5])
     ar.volatility = GARCH(p=1, q=1)
-    print("ar", ar.volatility)
     res = ar.fit(update_freq=0, disp="off")
-    print("condi_vol", res.conditional_volatility)
     return check_and_interpolate(res.conditional_volatility * rescale)
 
 
-def get_DP(d_short: np.array, d_long: np.array):
-    return d_short + d_long / 2
+def get_DP(d_short: np.array, d_long: np.array, lever_ratio):
+    return (d_short + d_long / 2) / (lever_ratio * 1.5)
 
 
 def get_d1(VA, sigmaA, DP):
@@ -77,16 +75,23 @@ def get_sigmaA_v2(E, sigmaE, VA, VE, Nd1):
 
 
 def get_iterated_result(
-    p, e, d_short, d_long, outstanding_shares, total_shares, N, stop_diff, mode="v1"
+    p,
+    e,
+    d_short,
+    d_long,
+    lever_ratio,
+    outstanding_shares,
+    total_shares,
+    N,
+    stop_diff,
+    mode="v1",
 ):
     # 根据2020文章 对于金融业的关系函数 设计v2
     get_sigmaA_fun = {"v1": get_sigmaA, "v2": get_sigmaA_v2}[mode]
     E = check_and_interpolate(get_E(p, e, outstanding_shares, total_shares))
     # E = E.astype("double")
-    DP = check_and_interpolate(get_DP(d_short, d_long))
+    DP = check_and_interpolate(get_DP(d_short, d_long, lever_ratio))
     # print("E", E, "sigmaE", get_sigmaE(E))
-    print("E")
-    print(E)
     sigmaE = check_and_interpolate(get_sigmaE(E))
     # sigmaE = sigmaE.astype("double")
     # sigmaE = np.nan_to_num(sigmaE, copy=True, nan=np.nanmean(sigmaE))
@@ -119,19 +124,16 @@ def check_and_interpolate(x):
         return x
 
 
-#%%
-
-if __name__ == "__main__":
-    mode = "v2"
-    code = "601398.SH"
-    df = get_real_data(code, "20180101", "20201201")
-    p, e, d_short, d_long, outstanding_shares, total_shares = (
+def get_final_res_from_code(code, start_date, end_date, mode):
+    df = get_real_data(code, start_date, end_date)
+    p, e, d_short, d_long, outstanding_shares, total_shares, lever_ratio = (
         df["close"],
         df["total_hldr_eqy_inc_min_int"],
-        df["total_liab"] / 3,
-        df["total_liab"] / 2,
+        df["total_liab"] * 0.9,
+        df["total_liab"] * 0.1,
         df["outstanding_share"],
         df["total_share"],
+        df["total_liab"] / df["total_hldr_eqy_inc_min_int"],
     )
     p = check_and_interpolate(p.astype("double"))
     e = check_and_interpolate(e.astype("double"))
@@ -139,10 +141,34 @@ if __name__ == "__main__":
     d_short = check_and_interpolate(d_short.astype("double"))
     outstanding_shares = check_and_interpolate(outstanding_shares.astype("double"))
     total_shares = check_and_interpolate(total_shares.astype("double"))
+    lever_ratio = check_and_interpolate(lever_ratio.astype("double"))
     VA, sigmaA, iter_, DD, delta_ = get_iterated_result(
-        p, e, d_short, d_long, outstanding_shares, total_shares, 100, 1e-3, mode=mode
+        p,
+        e,
+        d_short,
+        d_long,
+        lever_ratio,
+        outstanding_shares,
+        total_shares,
+        100,
+        1e-3,
+        mode=mode,
     )
-    df_res = pd.DataFrame({"VA": VA, "sigmaA": sigmaA, "DD": DD})
-    df_res.to_csv("%s_res_%s.csv" % (code, mode))
+    df["VA"] = VA
+    df["sigmaA"] = sigmaA
+    df["DD"] = DD
+    return iter_, delta_, df
 
-    print(iter_, delta_)
+
+#%%
+
+if __name__ == "__main__":
+    mode = "v2"
+    code = "601398.SH"
+    iter_, delta_, df = get_final_res_from_code(code, "20180101", "20201201", mode)
+    df_res = pd.DataFrame({"VA": df["VA"], "sigmaA": df["sigmaA"], "DD": df["DD"]})
+    df_res.to_csv("%s_res_%s.csv" % (code, mode))
+    print(iter_, delta_, df_res)
+    print(df)
+    print(df["total_liab"])
+    print(df["total_hldr_eqy_inc_min_int"])
