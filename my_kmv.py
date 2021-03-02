@@ -3,6 +3,7 @@ from scipy.stats import norm
 from scipy import integrate
 from arch.univariate import ZeroMean, GARCH, Normal, ARX
 from api_data import get_real_data
+from api_data2 import get_real_hk_data
 import pandas as pd
 
 R = 0.05
@@ -125,7 +126,10 @@ def check_and_interpolate(x):
 
 
 def get_final_res_from_code(code, start_date, end_date, mode):
-    df = get_real_data(code, start_date, end_date)
+    if "." in code:
+        df = get_real_data(code, start_date, end_date)
+    else:
+        df = get_real_hk_data(code)
     p, e, d_short, d_long, outstanding_shares, total_shares, lever_ratio = (
         df["close"],
         df["total_hldr_eqy_inc_min_int"],
@@ -161,10 +165,25 @@ def get_final_res_from_code(code, start_date, end_date, mode):
 
 
 #%%
-
+# hong kong data
+# {'重庆银行': '01963',
+#  '甘肃银行': '02139',
+#  '徽商银行': '03698',
+#  '晋商银行': '02558',
+#  '威海银行': '09677',
+#  '哈尔滨银行': '06138',
+#  '贵州银行': '06199',
+#  '江西银行': '01916',
+#  '九江银行': '06190',
+#  '盛京银行': '02066',
+#  '中原银行': '01216',
+#  '锦州银行': '00416',
+#  '泸州银行': '01983',
+#  '天津银行': '01578'}
 if __name__ == "__main__":
     mode = "v2"
-    code = "601398.SH"
+    code = "601187.SH"
+    # code = "01578"
     iter_, delta_, df = get_final_res_from_code(code, "20180101", "20201201", mode)
     df_res = pd.DataFrame({"VA": df["VA"], "sigmaA": df["sigmaA"], "DD": df["DD"]})
     df_res.to_csv("%s_res_%s.csv" % (code, mode))

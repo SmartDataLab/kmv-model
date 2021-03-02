@@ -49,11 +49,6 @@ def get_real_data(code, start_date, end_date):
         symbol=code, start_date=start_date, end_date=end_date, adjust="qfq"
     )
 
-    df2["total_liab"] = None
-    df2["total_share"] = None
-    df2["total_hldr_eqy_inc_min_int"] = None
-    df2["profit_to_op"] = None
-
     for i, date_str in enumerate(df2.index):
         input_str = "20" + date_str.strftime("%y%m%d")
         # print(input_str)
@@ -71,7 +66,7 @@ def get_real_data(code, start_date, end_date):
 
 
 if __name__ == "__main__":
-    code = "600519.SH"
+    code = "601187.SH"
     # code = "601963.SH"
     df = get_real_data(code, "20100101", "20201201")
     print(df)

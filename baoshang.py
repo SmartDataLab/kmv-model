@@ -26,12 +26,6 @@ def get_average_data(codes, start_date, end_date):
             big_df.loc[index, :] = (i + 1) / (i + 2) * big_df.loc[index, :] + 1 / (
                 i + 2
             ) * df.loc[index, :]
-            # big_df = big_df.loc[index, :]
-            # df = df.loc[big_df.index, :]
-            # for column in big_df.columns:
-            # big_df[column] += df[column]
-    # for column in big_df.columns:
-    # big_df[column] /= i + 1
     return big_df
 
 
@@ -48,12 +42,24 @@ code_dict = {
     "西安银行": "600928.SH",
     "南京银行": "601009.SH",
     "北京银行": "601169.SH",
-    # "厦门银行": "601187.SH", api没有数据
     "上海银行": "601229.SH",
     "长沙银行": "601577.SH",
     "成都银行": "601860.SH",
-    # "重庆银行": "601963.SH", api没有数据
     "贵阳银行": "601997.SH",
+    "重庆银行": "01963",
+    "甘肃银行": "02139",
+    "徽商银行": "03698",
+    "晋商银行": "02558",
+    "威海银行": "09677",
+    "哈尔滨银行": "06138",
+    "贵州银行": "06199",
+    "江西银行": "01916",
+    "九江银行": "06190",
+    "盛京银行": "02066",
+    "中原银行": "01216",
+    "锦州银行": "00416",
+    "泸州银行": "01983",
+    "天津银行": "01578",
 }
 mean_df = get_average_data(code_dict.values(), "20100101", "20191231")
 #%%
@@ -151,10 +157,10 @@ def get_baoshang_data(mean_df):
             "total_hldr_eqy_inc_min_int": 29799986000
             + 5507085000 * 0.79
             + 5507085000 * 0.5
-            + 5507085000 * 0.2,
-            "profit_to_op": 5507085000 * 0.2,
+            + 5507085000 * 0.3,
+            "profit_to_op": 5507085000 * 0.3,
             "total_assets": 523100000000,
-            "roe_dt": 15.11 * 0.2,
+            "roe_dt": 15.11 * 0.3,
         },
     }
     index = [x.strftime("%Y-%m-%d") for x in df.index]

@@ -28,22 +28,42 @@ code_dict = {
     "西安银行": "600928.SH",
     "南京银行": "601009.SH",
     "北京银行": "601169.SH",
-    # "厦门银行": "601187.SH", api没有数据
+    "厦门银行": "601187.SH",  # api没有数据
     "上海银行": "601229.SH",
     "长沙银行": "601577.SH",
     "成都银行": "601860.SH",
-    # "重庆银行": "601963.SH", api没有数据
     "贵阳银行": "601997.SH",
+    "重庆银行": "01963",
+    "甘肃银行": "02139",
+    "徽商银行": "03698",
+    "晋商银行": "02558",
+    "威海银行": "09677",
+    "哈尔滨银行": "06138",
+    "贵州银行": "06199",
+    "江西银行": "01916",
+    "九江银行": "06190",
+    "盛京银行": "02066",
+    "中原银行": "01216",
+    "锦州银行": "00416",
+    "泸州银行": "01983",
+    "天津银行": "01578",
 }
 
 tuple_list = get_tuple_list(code_dict.values(), "20100101", "20201231")
 # %%
 import matplotlib.pyplot as plt
 
+figure = plt.figure()
 plt.hist([x[0] for x in tuple_list])
+plt.savefig("figure/all_DD_hist.png")
+plt.close()
 
 # %%
+figure = plt.figure()
 plt.hist([x[1] for x in tuple_list])
+plt.savefig("figure/all_roe_hist.png")
+plt.close()
+
 
 # %%
 range_list = [(-1 + i * 0.1, -0.9 + i * 0.1) for i in range(20)]
