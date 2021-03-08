@@ -36,7 +36,7 @@ def get_sigmaE(E, method="GARCH"):
 
 
 def get_DP(d_short: np.array, d_long: np.array, lever_ratio):
-    return (d_short + d_long / 2) / (lever_ratio * 1.5)
+    return (d_short + d_long / 2) / (lever_ratio * 2)
 
 
 def get_d1(VA, sigmaA, DP):
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     mode = "v2"
     code = "601187.SH"
     # code = "01578"
-    iter_, delta_, df = get_final_res_from_code(code, "20180101", "20201201", mode)
+    iter_, delta_, df = get_final_res_from_code(code, "20100101", "20201201", mode)
     df_res = pd.DataFrame({"VA": df["VA"], "sigmaA": df["sigmaA"], "DD": df["DD"]})
     df_res.to_csv("%s_res_%s.csv" % (code, mode))
     print(iter_, delta_, df_res)
